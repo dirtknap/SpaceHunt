@@ -19,7 +19,18 @@ namespace SpaceHunt.StateTracker
         
         public StateTracker Instance
         {
-            get { return instance ?? (instance = new StateTracker()); }
+            get
+            {
+                if (instance == null)
+                {
+                    lock (lockObject)
+                    {
+                        instance = new StateTracker();
+                    }
+                }
+
+                return instance;
+            }
         }
 
         private StateTracker()
