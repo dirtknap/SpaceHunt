@@ -10,6 +10,7 @@ namespace SpaceHunt.Actors
 
         private Dictionary<IActorRef, bool> TurnCompleteTracker = new Dictionary<IActorRef, bool>();
         private IActorRef turnEndActor;
+        private IActorRef drawingActor;
 
         public GameManagerActor()
         {
@@ -34,11 +35,13 @@ namespace SpaceHunt.Actors
 
         protected override void PreStart()
         {
-            turnEndActor = Context.ActorOf(Props.Create(() => new TurnEndActor()), "TurnEndActor");
+            drawingActor = Context.ActorOf(Props.Create(() => new DrawingActor()), "drawingActor");
+            turnEndActor = Context.ActorOf(Props.Create(() => new TurnEndActor()), "turnEndActor");
         }
 
         private void StartGame()
         {
+            drawingActor.Tell(new InitialzeScreen());
             StartGameTurn();   
         }
 

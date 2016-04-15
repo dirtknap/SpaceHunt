@@ -16,7 +16,26 @@ namespace SpaceHunt.GameObjects.Enums
     public enum Owner
     {
         Player,
-        AI
+        AI,
+        Neutral,
+        Contested
     }
+
+    public enum Resource
+    {
+        Production,
+        Food,
+        Science,
+        None
+    }
+
+    public enum Icons
+    {
+        Probe,
+        Fighter,
+        Cruiser,
+        Station
+    }
+
 
 }

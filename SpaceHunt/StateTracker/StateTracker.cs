@@ -6,18 +6,19 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SpaceHunt.GameObjects;
+using SpaceHunt.Utils;
 
 namespace SpaceHunt.StateTracker
 {
     class StateTracker
     {
-        private StateTracker instance;
+        private static StateTracker instance;
 
-        private readonly List<IGameObject>[,] MapState;
+        private readonly Sector[,] mapState;
 
-        private object lockObject;
+        private static object lockObject = new object();
         
-        public StateTracker Instance
+        public static StateTracker Instance
         {
             get
             {
@@ -35,17 +36,25 @@ namespace SpaceHunt.StateTracker
 
         private StateTracker()
         {
-            MapState = new List<IGameObject>[32,32];
+            mapState = new Sector[64,32];
+
+            InitializeMapState();
+        }
+
+
+        public Sector[,] GetState()
+        {
+            return mapState;
         }
 
         public void UpdateObject(IGameObject gameObject)
         {
             lock (lockObject)
             {
-                if (!MapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].Contains(gameObject))
+                if (mapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].HasObject(gameObject))
                 {
-                    MapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].Add(gameObject);
-                    MapState[gameObject.OldPos().X, gameObject.OldPos().Y].Remove(gameObject);
+                    mapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].AddGameObject(gameObject);
+                    mapState[gameObject.OldPos().X, gameObject.OldPos().Y].RemoveGameObject(gameObject);
                 }
             }
         }
@@ -54,21 +63,21 @@ namespace SpaceHunt.StateTracker
         {
             if (!StateContainsObject(gameObject))
             {
-                MapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].Add(gameObject);
+                mapState[gameObject.CurrentPos().X, gameObject.CurrentPos().Y].AddGameObject(gameObject);
             }
-
         }
+
         public void RemoveObject(IGameObject gameObject)
         {
             lock (lockObject)
             {
-                for (var x = 0; x < MapState.GetLength(0); x++)
+                for (var x = 0; x < mapState.GetLength(0); x++)
                 {
-                    for (var y = 0; y < MapState.GetLength(1); y++)
+                    for (var y = 0; y < mapState.GetLength(1); y++)
                     {
-                        if (MapState[x, y].Contains(gameObject))
+                        if (mapState[x, y].HasObject(gameObject))
                         {
-                            MapState[x, y].Remove(gameObject);
+                            mapState[x, y].RemoveGameObject(gameObject);
                         }
                     }
                 }
@@ -81,11 +90,11 @@ namespace SpaceHunt.StateTracker
 
             lock (lockObject)
             {
-                for (var x = 0; x < MapState.GetLength(0); x++)
+                for (var x = 0; x < mapState.GetLength(0); x++)
                 {
-                    for (var y = 0; y < MapState.GetLength(1); y++)
+                    for (var y = 0; y < mapState.GetLength(1); y++)
                     {
-                        if (MapState[x, y].Contains(gameObject))
+                        if (mapState[x, y].HasObject(gameObject))
                         {
                             result.Add(new Point(x, y));
                         }
@@ -94,7 +103,7 @@ namespace SpaceHunt.StateTracker
                 }
             }
 
-            return result.Count > 0;
+            return result.Any();
         }
 
         private List<Point> StateFindObject(IGameObject gameObject)
@@ -103,20 +112,33 @@ namespace SpaceHunt.StateTracker
 
             lock (lockObject)
             {
-                for (var x = 0; x < MapState.GetLength(0); x++)
+                for (var x = 0; x < mapState.GetLength(0); x++)
                 {
-                    for (var y = 0; y < MapState.GetLength(1); y++)
+                    for (var y = 0; y < mapState.GetLength(1); y++)
                     {
-                        if (MapState[x, y].Contains(gameObject))
+                        if (mapState[x, y].HasObject(gameObject))
                         {
                             result.Add(new Point(x, y));
                         }
-
                     }
                 }
             }
 
             return result;
+        }
+
+        private void InitializeMapState()
+        {
+            lock (lockObject)
+            {
+                for (var x = 0; x < mapState.GetLength(0); x++)
+                {
+                    for (var y = 0; y < mapState.GetLength(1); y++)
+                    {
+                        mapState[x, y] = Randomizer.Instance.GenerateRandomSector(x,y); 
+                    }
+                }
+            }
         }
 
     }

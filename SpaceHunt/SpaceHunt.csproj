@@ -62,10 +62,13 @@
     <Compile Include="Actors\TurnEndActor.cs" />
     <Compile Include="GameObjects\Enums\Enums.cs" />
     <Compile Include="GameObjects\IGameObject.cs" />
+    <Compile Include="Messages\DrawingMessages.cs" />
     <Compile Include="Messages\TimingMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateTracker\Sector.cs" />
     <Compile Include="StateTracker\StateTracker.cs" />
+    <Compile Include="Utils\Randomizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
