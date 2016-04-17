@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using SpaceHunt.Actors;
 using SpaceHunt.Messages;
+using SpaceHunt.Utils;
 
 namespace SpaceHunt
 {
@@ -16,10 +17,11 @@ namespace SpaceHunt
 
         static void Main(string[] args)
         {
-            Console.SetWindowSize(79,34);
-            Console.SetBufferSize(79,34);
+            Console.SetWindowSize(GameSettings.GridSize.X + GameSettings.RightColumnSize, GameSettings.GridSize.Y + GameSettings.CommandLines);
+            Console.SetBufferSize(GameSettings.GridSize.X + GameSettings.RightColumnSize, GameSettings.GridSize.Y + GameSettings.CommandLines);
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.CursorSize = 100;
+            //Console.
 
             MyActorSystem = ActorSystem.Create("MyActorSystem");
 

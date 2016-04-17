@@ -47,6 +47,11 @@ namespace SpaceHunt.StateTracker
             return mapState;
         }
 
+        public Sector GetSector(int x, int y)
+        {
+            return mapState[x, y];
+        }
+
         public void UpdateObject(IGameObject gameObject)
         {
             lock (lockObject)

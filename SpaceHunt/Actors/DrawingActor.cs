@@ -8,6 +8,7 @@ using Akka.Actor;
 using SpaceHunt.GameObjects.Enums;
 using SpaceHunt.Messages;
 using SpaceHunt.StateTracker;
+using SpaceHunt.Utils;
 
 namespace SpaceHunt.Actors
 {
@@ -51,6 +52,11 @@ namespace SpaceHunt.Actors
             {
                 UpdateSector(msg.Sector);
             });
+
+            Receive<DrawCursor>(msg =>
+            {
+                UpdateCursor(msg.CursorPos);
+            });
         }
 
         private void InitialzeScreen()
@@ -79,6 +85,12 @@ namespace SpaceHunt.Actors
             Console.SetCursorPosition(0,32);
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Command:");
+            Console.SetCursorPosition(0, GameSettings.GridSize.Y + GameSettings.CommandLines - 1);
+        }
+
+        private void UpdateCursor(Point cursor)
+        {
+            Console.SetCursorPosition(cursor.X, cursor.Y);
         }
 
         private void UpdateSector(Sector sector)
@@ -102,6 +114,11 @@ namespace SpaceHunt.Actors
             {
                 Console.Write((sector.Objects.Count > 1 ? sector.Objects.First().Icon() : ' '));
             }
+        }
+
+        private bool CursorInGrid()
+        {
+            return Console.CursorLeft < GameSettings.GridSize.X && Console.CursorTop < GameSettings.GridSize.Y;
         }
 
         private void InitializeRightColumn()
