@@ -13,7 +13,7 @@ namespace SpaceHunt.Utils
     {
         private static Randomizer instance;
         private Random random;
-        private int NameCounter;
+        private int nameCounter;
 
         #region name array
 
@@ -345,12 +345,14 @@ namespace SpaceHunt.Utils
 
         private string NextSectorName()
         {
-            if (NameCounter == names.Length)
+            if (nameCounter == names.Length - 1)
             {
-                NameCounter = 0;
+                nameCounter = 0;
             }
 
-            return names[NameCounter];
+            nameCounter++;
+
+            return names[nameCounter];
         }
 
         private Resource RandomResource()

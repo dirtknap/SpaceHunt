@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
+using SpaceHunt.GameObjects;
 using SpaceHunt.GameObjects.Enums;
 using SpaceHunt.Messages;
 using SpaceHunt.StateTracker;
@@ -90,7 +91,11 @@ namespace SpaceHunt.Actors
 
         private void UpdateCursor(Point cursor)
         {
-            Console.SetCursorPosition(cursor.X, cursor.Y);
+            if (PointInGrid(cursor.X, cursor.Y))
+            {
+                UpdateSectorMenu(StateTracker.StateTracker.Instance.GetSector(cursor.X, cursor.Y));
+            }
+            Console.SetCursorPosition(cursor.X, cursor.Y);         
         }
 
         private void UpdateSector(Sector sector)
@@ -116,9 +121,22 @@ namespace SpaceHunt.Actors
             }
         }
 
-        private bool CursorInGrid()
+        private void UpdateSectorMenu(Sector sector)
         {
-            return Console.CursorLeft < GameSettings.GridSize.X && Console.CursorTop < GameSettings.GridSize.Y;
+            var line = 2;
+            Console.SetCursorPosition(GameSettings.GridSize.X + 1, line);
+            Console.Write(sector.Name);
+            foreach (var o in sector.Objects)
+            {
+                line++;
+                Console.SetCursorPosition(GameSettings.GridSize.X, line);
+                Console.Write(o.Name());
+            }
+        }
+
+        private bool PointInGrid(int x, int y)
+        {
+            return x < GameSettings.GridSize.X && y < GameSettings.GridSize.Y;
         }
 
         private void InitializeRightColumn()
